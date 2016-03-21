@@ -36,7 +36,7 @@ class xsWetter extends \ContentElement
             if (file_exists($cssFile->path))
                 $GLOBALS['TL_USER_CSS']['xswetter'] = $cssFile->path;
             else
-                $GLOBALS['TL_USER_CSS']['xswetter'] = 'system/modules/xsWetter/assets/default.css';
+                $GLOBALS['TL_USER_CSS']['xswetter'] = 'system/modules/Contao-Wetter/assets/default.css';
             $this->datenladen($this->xs_wetter_id, $res->wetter_key, $res->wetter_ort, $res->wetter_tage);
             $datenfile = "files/xsWetter/wetter_" . $this->xs_wetter_id . ".xml";
             if (file_exists($datenfile)) {
@@ -63,7 +63,7 @@ class xsWetter extends \ContentElement
                         {
                             $arrHeute['ort']= $ort;
                             $arrHeute['vom'] = $GLOBALS['TL_LANG']['xsWetter']['tage'][date("w", strtotime((string)$daydat['from']))] . " " . date("d.m.Y", strtotime((string)$daydat['from']));
-                            $arrHeute['icon'] = 'system/modules/xsWetter/assets/' . (string)$daydat->symbol['var'] . '.png';
+                            $arrHeute['icon'] = 'system/modules/Contao-Wetter/assets/' . (string)$daydat->symbol['var'] . '.png';
                             $arrHeute['temp'] = number_format((double)$daydat->temperature['value'], '1', ',', '');
                             $arrHeute['tempmin'] = number_format((double)$daydat->temperature['min'], '1', ',', '');
                             $arrHeute['tempmax'] = number_format((double)$daydat->temperature['max'], '1', ',', '');
@@ -77,7 +77,7 @@ class xsWetter extends \ContentElement
                         }else { // Weitere Tage
                             $arrWetter[] = array(
                                 "vom" => $GLOBALS['TL_LANG']['xsWetter']['tage'][date("w", strtotime((string)$daydat['from']))] . " " . date("d.m.Y", strtotime((string)$daydat['from'])),
-                                "icon" => 'system/modules/xsWetter/assets/' . (string)$daydat->symbol['var'] . '.png',
+                                "icon" => 'system/modules/Contao-Wetter/assets/' . (string)$daydat->symbol['var'] . '.png',
                                 "temp" => number_format((double)$daydat->temperature['value'], '1', ',', ''),
                                 "tempmin" => number_format((double)$daydat->temperature['min'], '1', ',', ''),
                                 "tempmax" => number_format((double)$daydat->temperature['max'], '1', ',', ''),

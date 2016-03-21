@@ -26,10 +26,10 @@ ClassLoader::addNamespaces(array
 ClassLoader::addClasses(array
 (
     // Elements
-    'xsWetter\xsWetter' => 'system/modules/xsWetter/elements/xsWetter.php',
+    'xsWetter\xsWetter' => 'system/modules/Contao-Wetter/elements/xsWetter.php',
 
     // Modules
-    'xsWetter\ModxsWetter' => 'system/modules/FewoVerwalter/modules/ModxsWetter.php'
+    'xsWetter\ModxsWetter' => 'system/modules/Contao-Wetter/modules/ModxsWetter.php'
     //Sonstiges
 ));
 
@@ -39,7 +39,7 @@ ClassLoader::addClasses(array
 TemplateLoader::addFiles(
     array
     (
-        'xsWetter' => 'system/modules/xsWetter/templates',
+        'xsWetter' => 'system/modules/Contao-Wetter/templates',
     ));
 
 ?>
