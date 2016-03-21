@@ -1,0 +1,57 @@
+<div class="xs_wetter <?php echo $this->class; ?> block"<?php echo $this->cssID; ?><?php if ($this->style): ?> style="<?php echo $this->style; ?>"<?php endif; ?>>
+    <!-- Wettermodul beginnt! -->
+    <?php if($this->error): ?>
+        <div class="error"><?php print $this->error; ?></div>
+    <?php else: ?>
+        <div class="wetterHeute">
+            <div class="ort"><?php print $this->heute['ort']; ?></div>
+            <div class="datum"><?php print $this->heute['vom'];?></div>
+            <div class="temp"><?php print $GLOBALS['TL_LANG']['xsWetter']['temp']; ?> <?php print $this->heute['temp'];?> C°</div>
+            <?php if($this->Template->wetter_symbol): ?>
+                <div class="symbol"><img src="<?php print $this->heute['icon']; ?>"></div>
+            <?php endif; ?>
+            <?php if($this->Template->wetter_sonnezeit): ?>
+                <div class="sonne"><?php print $GLOBALS['TL_LANG']['xsWetter']['sonne']; ?> <?php print $this->heute['sonnevon'] . " Uhr bis " .$this->heute['sonnebis']; ?> Uhr</div>
+            <?php endif; ?>
+            <?php if($this->Template->wetter_tempminmax): ?>
+                <div class="tempmin"><?php print $GLOBALS['TL_LANG']['xsWetter']['mintemp']; ?> <?php print $this->heute['tempmin']; ?> C°</div>
+                <div class="tempmax"><?php print $GLOBALS['TL_LANG']['xsWetter']['maxtemp']; ?> <?php print $this->heute['tempmax']; ?> C°</div>
+            <?php endif; ?>
+            <?php if($this->Template->wetter_wind): ?>
+                <div class="wind"><?php print $GLOBALS['TL_LANG']['xsWetter']['wind']; ?> <?php print $this->heute['wind'] . " km/h  " .$this->heute['windrichtung']; ?></div>
+            <?php endif; ?>
+            <?php if($this->Template->wetter_luftfeucht): ?>
+                <div class="luft"><?php print $GLOBALS['TL_LANG']['xsWetter']['luft']; ?> <?php print $this->heute['luft'] ; ?> %</div>
+            <?php endif; ?>
+            <?php if($this->Template->wetter_luftdruck): ?>
+                <div class="luftdruck"><?php print $GLOBALS['TL_LANG']['xsWetter']['luftdruck']; ?> <?php print $this->heute['druck'] ; ?> hPa</div>
+            <?php endif; ?>
+            <div class="filler"></div>
+        </div>
+        <?php foreach($this->wetter as $wetter): ?>
+            <div class="wetterTag">
+            <div class="datum"><?php print $wetter['vom'];?></div>
+            <div class="temp"><?php print $GLOBALS['TL_LANG']['xsWetter']['temp']; ?> <?php print $wetter['temp'];?> C°</div>
+            <?php if($this->Template->wetter_symbol): ?>
+                <div class="symbol"><img src="<?php print $wetter['icon']; ?>"></div>
+            <?php endif; ?>
+            <?php if($this->Template->wetter_tempminmax): ?>
+                <div class="tempmin"><?php print $GLOBALS['TL_LANG']['xsWetter']['mintemp']; ?> <?php print $wetter['tempmin']; ?> C°</div>
+                <div class="tempmax"><?php print $GLOBALS['TL_LANG']['xsWetter']['maxtemp']; ?> <?php print $wetter['tempmax']; ?> C°</div>
+            <?php endif; ?>
+            <?php if($this->Template->wetter_wind): ?>
+                <div class="wind"><?php print $GLOBALS['TL_LANG']['xsWetter']['wind']; ?> <?php print $wetter['wind'] . " km/h  " .$wetter['windrichtung']; ?></div>
+            <?php endif; ?>
+            <?php if($this->Template->wetter_luftfeucht): ?>
+                <div class="luft"><?php print $GLOBALS['TL_LANG']['xsWetter']['luft']; ?> <?php print $wetter['luft'] ; ?> %</div>
+            <?php endif; ?>
+            <?php if($this->Template->wetter_luftdruck): ?>
+                <div class="luftdruck"><?php print $GLOBALS['TL_LANG']['xsWetter']['luftdruck']; ?> <?php print $wetter['druck'] ; ?> hPa</div>
+            <?php endif; ?>
+            <div class="filler"></div>
+            </div>
+        <?php endforeach; ?>
+    <?php endif; ?>
+    <div class="wetter_copyright"><a href="http://www.openweathermap.org" target="_blank">&copy; openweathermap.org</a></div>
+    <!-- Wettermodul endet! -->
+</div>
