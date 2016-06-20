@@ -96,7 +96,8 @@ $GLOBALS['TL_DCA']['tl_xs_wetter'] = array(
             'options' => array('1', '2','3','4','5'),
             'default' => '1',
             'eval' => array( 'tl_class' => 'clr'),
-            'sql' => "int(1) unsigned NOT NULL default '3'"
+            'sql' => "int(1) unsigned NOT NULL default '3'",
+            'save_callback' => array(array('tl_xs_wetter','tl_xs_wetter_delete'))
         ),
         'wetter_sonnezeit' => array(
             'label' => &$GLOBALS['TL_LANG']['tl_xs_wetter']['wetter_sonnezeit'],
@@ -136,4 +137,13 @@ $GLOBALS['TL_DCA']['tl_xs_wetter'] = array(
         )
     )
 );
+class tl_xs_wetter extends \Backend{
+
+        public function tl_xs_wetter_delete($fields)
+        {
+            $objFolder = new \Folder('files/xswetter');
+            $objFolder->delete();
+            return $fields;
+        }
+}
 ?>

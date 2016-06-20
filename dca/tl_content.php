@@ -1,5 +1,5 @@
 <?php
-$GLOBALS['TL_DCA']['tl_content']['palettes']['xs_wetter'] = '{title_legend},name,type;{label_wetterglobal},xs_wetter_id;{expert_legend:hide}guests,cssID,space;';
+$GLOBALS['TL_DCA']['tl_content']['palettes']['xs_wetter'] = '{title_legend},name,type;{label_wetterglobal},xs_wetter_id;{protected_legend:hide},protected;{expert_legend:hide}guests,cssID,space;';
 $GLOBALS['TL_DCA']['tl_content']['fields']['xs_wetter_id'] = array('label' => &$GLOBALS['TL_LANG']['tl_content']['xs_wetter_id'], 'inputType' => 'select', 'options_callback' => array('tl_content_wetter', 'holeWetter'), 'eval' => array('mandatory' => true, 'tl_class' => 'long'), 'sql' => "int(10) unsigned NOT NULL default '0'");
 
 
@@ -15,5 +15,7 @@ class tl_content_wetter extends \Backend {
         }
         return ($arrElem);
     }
+
+
 }
 ?>

@@ -1,9 +1,6 @@
 <?php
-// Register on http://kunden.dwd.de/gdsRegistration/gdsRegistrationStart.do
 
 namespace xsWetter;
-
-use Contao\Database;
 
 class xsWetter extends \ContentElement
 {
@@ -32,64 +29,62 @@ class xsWetter extends \ContentElement
             $res = \Database::getInstance()->prepare("SELECT * FROM tl_xs_wetter WHERE id=" . $this->xs_wetter_id)->execute();
             if ($res->numRows < 1)
                 return;
+            $tage = $res->wetter_tage;
             $cssFile = \FilesModel::findById($res->wetter_design);
             if (file_exists($cssFile->path))
                 $GLOBALS['TL_USER_CSS']['xswetter'] = $cssFile->path;
             else
-                $GLOBALS['TL_USER_CSS']['xswetter'] = 'system/modules/Contao-Wetter/assets/default.css';
+                $GLOBALS['TL_USER_CSS']['xswetter'] = 'system/modules/xsWetter/assets/default.css';
             $this->datenladen($this->xs_wetter_id, $res->wetter_key, $res->wetter_ort, $res->wetter_tage);
-            $datenfile = "files/xsWetter/wetter_" . $this->xs_wetter_id . ".xml";
+            $datenfile = "files/xswetter/wetter_" . $this->xs_wetter_id . ".xml";
+            $jetztZeit = date("H:i",time());
             if (file_exists($datenfile)) {
                 $xml = simplexml_load_file($datenfile, 'SimpleXMLElement');
                 $arrWetter = array();
-                $arrHeute = array();
                 $this->Template->wetter_sonnezeit = ($res->wetter_sonnezeit == 0 ? false : true);
                 $this->Template->wetter_symbol = ($res->wetter_symbol == 0 ? false : true);
                 $this->Template->wetter_tempminmax = ($res->wetter_tempminmax == 0 ? false : true);
                 $this->Template->wetter_wind = ($res->wetter_wind == 0 ? false : true);
                 $this->Template->wetter_luftfeucht = ($res->wetter_luftfeucht == 0 ? false : true);
                 $this->Template->wetter_luftdruck = ($res->wetter_luftdruck == 0 ? false : true);
-
-                $ort = (string)$xml->location->name;
-                foreach ($xml->sun as $dat) {
-                    $heutesun1 = date("H:m", strtotime((string)$dat['rise']));
-                    $heutesun2 = date("H:m", strtotime((string)$dat['set']));
-                }
-                $zaehler =0;
+                $this->Template->wetter_ort = (string)$xml->location->name;
+                $tagHeute = date("z",time());
+                $tageJetzt =0;
                 foreach ($xml->forecast->time as $daydat) {
-                    if (date("H", strtotime((string)$daydat['from'])) == 12) { // Lese nur die 12 Uhr Werte ein
-                        $zaehler ++;
-                        if($zaehler == 1) // Heute
-                        {
-                            $arrHeute['ort']= $ort;
-                            $arrHeute['vom'] = $GLOBALS['TL_LANG']['xsWetter']['tage'][date("w", strtotime((string)$daydat['from']))] . " " . date("d.m.Y", strtotime((string)$daydat['from']));
-                            $arrHeute['icon'] = 'system/modules/Contao-Wetter/assets/' . (string)$daydat->symbol['var'] . '.png';
-                            $arrHeute['temp'] = number_format((double)$daydat->temperature['value'], '1', ',', '');
-                            $arrHeute['tempmin'] = number_format((double)$daydat->temperature['min'], '1', ',', '');
-                            $arrHeute['tempmax'] = number_format((double)$daydat->temperature['max'], '1', ',', '');
-                            $arrHeute['wind'] = number_format((double)$daydat->windSpeed['mps'] * 3.6, '1', ',', '');
-                            $arrHeute['windrichtung'] = (string)$daydat->windDirection['code'];
-                            $arrHeute['luft'] = (string)$daydat->humidity['value'];
-                            $arrHeute['druck'] = (string)$daydat->pressure['value'];
-                            $arrHeute['sonnevon'] = $heutesun1;
-                            $arrHeute['sonnebis'] = $heutesun2;
-
-                        }else { // Weitere Tage
+                    if ($jetztZeit  >= date("H:i", strtotime((string)$daydat['from'])) && $jetztZeit <= date("H:i", strtotime((string)$daydat['to'])) && $tagHeute == date('z',strtotime((string)$daydat['from'])) && $tageJetzt==0) {
+                        $tageJetzt =1;
+                        $arrWetter[] = array(
+                            'vom' => $GLOBALS['TL_LANG']['xsWetter']['tag'][date("w", strtotime((string)$daydat['from']))] . ' ' . date('d.m.Y', strtotime((string)$daydat['from'])),
+                            'zeit' => sprintf($GLOBALS['TL_LANG']['xsWetter']['zeit'],date("H:i", strtotime((string)$daydat['from'])),date("H:i", strtotime((string)$daydat['to']))),
+                            'icon' => 'system/modules/xsWetter/assets/' . (string)$daydat->symbol['var'] . '.png',
+                            'temp' => number_format((double)$daydat->temperature['value'], '1', ',', ''),
+                            'tempmin' => number_format((double)$daydat->temperature['min'], '1', ',', ''),
+                            'tempmax' => number_format((double)$daydat->temperature['max'], '1', ',', ''),
+                            'wind' => number_format((double)$daydat->windSpeed['mps'] * 3.6, '1', ',', ''),
+                            'windrichtung' => (string)$daydat->windDirection['code'],
+                            'luft' => (string)$daydat->humidity['value'],
+                            'druck' => (string)$daydat->pressure['value']
+                        );
+                    }
+                    if($tagHeute +$tageJetzt == date("z",strtotime((string)$daydat['from'])) && date("H", strtotime((string)$daydat['from'])) == 12)
+                    { // Weitere Tage
                             $arrWetter[] = array(
-                                "vom" => $GLOBALS['TL_LANG']['xsWetter']['tage'][date("w", strtotime((string)$daydat['from']))] . " " . date("d.m.Y", strtotime((string)$daydat['from'])),
-                                "icon" => 'system/modules/Contao-Wetter/assets/' . (string)$daydat->symbol['var'] . '.png',
-                                "temp" => number_format((double)$daydat->temperature['value'], '1', ',', ''),
-                                "tempmin" => number_format((double)$daydat->temperature['min'], '1', ',', ''),
-                                "tempmax" => number_format((double)$daydat->temperature['max'], '1', ',', ''),
-                                "wind" => number_format((double)$daydat->windSpeed['mps'] * 3.6, '1', ',', ''),
-                                "windrichtung" => (string)$daydat->windDirection['code'],
-                                "luft" => (string)$daydat->humidity['value'],
-                                "druck" => (string)$daydat->pressure['value']
+                                'vom' => $GLOBALS['TL_LANG']['xsWetter']['tag'][date("w", strtotime((string)$daydat['from']))] . ' ' . date('d.m.Y', strtotime((string)$daydat['from'])),
+                                'zeit' => sprintf($GLOBALS['TL_LANG']['xsWetter']['zeit'],date("H:i", strtotime((string)$daydat['from'])),date("H:i", strtotime((string)$daydat['to']))),
+                                'icon' => 'system/modules/xsWetter/assets/' . (string)$daydat->symbol['var'] . '.png',
+                                'temp' => number_format((double)$daydat->temperature['value'], '1', ',', ''),
+                                'tempmin' => number_format((double)$daydat->temperature['min'], '1', ',', ''),
+                                'tempmax' => number_format((double)$daydat->temperature['max'], '1', ',', ''),
+                                'wind' => number_format((double)$daydat->windSpeed['mps'] * 3.6, '1', ',', ''),
+                                'windrichtung' => (string)$daydat->windDirection['code'],
+                                'luft' => (string)$daydat->humidity['value'],
+                                'druck' => (string)$daydat->pressure['value']
                             );
-                        }
+                    }
+                    if(count($arrWetter) == $tage) {
+                        break;
                     }
                 }
-                $this->Template->heute = $arrHeute;
                 $this->Template->wetter = $arrWetter;
             }else
                 $this->Template->error = $GLOBALS['TL_LANG']['xsWetter']['error'];
@@ -104,8 +99,16 @@ class xsWetter extends \ContentElement
         if (!file_exists($datenfile))
             $this->holeDaten($id, $ort, $key, $tage);
         if (file_exists($datenfile)) {
-            $zeitaktuel = filemtime($datenfile);
-            if (date("d.m.Y", $zeitaktuel) != date("d.m.Y", time()))
+            $xml = simplexml_load_file($datenfile, 'SimpleXMLElement');
+            $zaehler = 0;
+            foreach ($xml->forecast->time as $daydat) {
+                $zaehler++;
+                if ($zaehler == 1) {
+                    $vonZeit = date("d.m.Y", strtotime((string)$daydat['from']));
+                    break;
+                }
+            }
+            if($vonZeit != date("d.m.Y",time()))
                 $this->holeDaten($id, $ort, $key, $tage);
         }
     }
@@ -113,7 +116,7 @@ class xsWetter extends \ContentElement
     protected function holeDaten($id, $ort, $key, $tage)
     {
         try {
-            if ($tage > 1)
+
                 $tage = $tage * 8;
             if(is_numeric($ort))
                 $url = 'http://api.openweathermap.org/data/2.5/forecast/city?id=' . $ort . '&units=metric&cnt=' . $tage . '&mode=xml&APPID=' . $key;
@@ -129,10 +132,20 @@ class xsWetter extends \ContentElement
             curl_close($ch);
             if(strpos($data,"Bad Request")> 0) {
                 \System::log('Error WetterModul : Bad Request', __METHOD__, TL_GENERAL);
+                $objFolder = new \Folder('files/xswetter');
+                $objFolder->delete();
+                return;
+            }
+            if(strpos($data,"Invalid")) {
+                \System::log('Error WetterModul : Invalid Api key', __METHOD__, TL_GENERAL);
+                $objFolder = new \Folder('files/xswetter');
+                $objFolder->delete();
                 return;
             }
             if(strpos($data,"Not found")) {
                 \System::log('Error WetterModul : Not found', __METHOD__, TL_GENERAL);
+                $objFolder = new \Folder('files/xswetter');
+                $objFolder->delete();
                 return;
             }
             $writexml = '<?xml version="1.0" encoding="utf-8"?>' . $data;

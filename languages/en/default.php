@@ -1,5 +1,6 @@
 <?php
 $GLOBALS['TL_LANG']['xsWetter'] = array(
+    'zeit' => '%s bis %s Uhr',
     'ort' => 'city',
     'datum' => 'date : ',
     'temp' => 'temperature:',
@@ -14,5 +15,5 @@ $GLOBALS['TL_LANG']['xsWetter'] = array(
     'luftdruck' => 'pressure :',
     'error' =>'No weather found!'
 );
-$GLOBALS['TL_LANG']['xsWetter']['tage'] = array("Son", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat");
+$GLOBALS['TL_LANG']['xsWetter']['tag'] = array("Son", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat");
 ?>
